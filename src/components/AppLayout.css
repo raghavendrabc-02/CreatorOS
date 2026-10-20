@@ -1,0 +1,24 @@
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app__content {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-7) var(--space-6);
+}
+
+.app__content > * {
+  max-width: 1200px;
+}
+
+@media (max-width: 900px) {
+  .app {
+    flex-direction: column;
+  }
+
+  .app__content {
+    padding: var(--space-5) var(--space-4);
+  }
+}

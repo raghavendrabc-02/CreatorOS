@@ -1,28 +1,318 @@
-/* Minimal base styles. The CreatorOS design system will replace these
-   once the visual direction is approved. */
+/* CreatorOS design tokens and base styles. */
+:root {
+  --color-bg: #f6f7fb;
+  --color-surface: #ffffff;
+  --color-border: #e9e9f1;
+  --color-border-strong: #d6d6e2;
+  --color-text: #0f1222;
+  --color-text-muted: #5e6275;
+  --color-brand: #8b5cf6;
+  --color-brand-strong: #7c3aed;
+  --color-brand-tint: rgba(124, 58, 237, 0.1);
+
+  --color-sidebar: #141a2e;
+  --color-sidebar-text: #c9cde0;
+  --color-sidebar-muted: #8a90a8;
+  --color-sidebar-hover: rgba(255, 255, 255, 0.05);
+  --color-sidebar-active: rgba(255, 255, 255, 0.09);
+
+  --color-quote-bg: #f5f0ff;
+  --color-quote-border: #ebe1ff;
+
+  --shadow-card: 0 1px 2px rgba(15, 18, 34, 0.04), 0 12px 32px rgba(15, 18, 34, 0.06);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 40px;
+  --space-7: 56px;
+
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+
+  --sidebar-width: 260px;
+
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Platform colours, applied via platform-theme--<id> on a card or page. */
+.platform-theme--instagram {
+  --platform-accent: #c026d3;
+  --platform-tint: rgba(217, 70, 239, 0.12);
+  --platform-tile: linear-gradient(45deg, #f9b233 0%, #ee2a7b 45%, #8a3ab9 100%);
+  --platform-button: linear-gradient(90deg, #7c3aed 0%, #ec4899 100%);
+}
+
+.platform-theme--youtube {
+  --platform-accent: #dc2626;
+  --platform-tint: rgba(239, 68, 68, 0.11);
+  --platform-tile: linear-gradient(180deg, #ff2d2d 0%, #e01010 100%);
+  --platform-button: #e11d26;
+}
+
+/* Tool colours, applied via tool-theme--<theme> on a tool card or page. */
+.tool-theme--violet {
+  --tool-accent: #7c3aed;
+  --tool-tint: rgba(139, 92, 246, 0.12);
+  --tool-media-bg: linear-gradient(135deg, #ede5ff 0%, #fbe9ff 100%);
+}
+
+.tool-theme--rose {
+  --tool-accent: #e11d48;
+  --tool-tint: rgba(244, 63, 94, 0.1);
+  --tool-media-bg: linear-gradient(135deg, #ffe4ec 0%, #fff1f3 100%);
+}
+
+.tool-theme--fuchsia {
+  --tool-accent: #c026d3;
+  --tool-tint: rgba(217, 70, 239, 0.12);
+  --tool-media-bg: linear-gradient(135deg, #fae8ff 0%, #fdf2f8 100%);
+}
+
+.tool-theme--amber {
+  --tool-accent: #ea580c;
+  --tool-tint: rgba(249, 115, 22, 0.12);
+  --tool-media-bg: linear-gradient(135deg, #ffedd5 0%, #fff7ed 100%);
+}
+
+/* Shared UI building blocks used across tools. */
+.panel {
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border: 0;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, filter 0.15s ease, opacity 0.15s ease;
+}
+
+.button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.button--primary {
+  background: var(--color-brand-strong);
+  color: #fff;
+}
+
+.button--primary:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+/* Primary button in the current tool's colour. */
+.button--accent {
+  background: var(--tool-accent);
+  color: #fff;
+}
+
+.button--accent:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.button--outline {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.button--outline:hover:not(:disabled):not([aria-disabled='true']) {
+  background: #f6f6fa;
+}
+
+.button[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.button--soft {
+  padding: var(--space-1) var(--space-3);
+  border-radius: 8px;
+  background: var(--color-brand-tint);
+  font-size: 0.9rem;
+  color: var(--color-brand-strong);
+}
+
+.button--soft:hover:not(:disabled) {
+  background: rgba(124, 58, 237, 0.18);
+}
+
+.button--text {
+  padding: var(--space-1) var(--space-2);
+  background: none;
+  font-size: 0.9rem;
+  color: var(--color-brand-strong);
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.icon-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.icon-button--small {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
+
+.icon-button--small svg {
+  width: 16px;
+  height: 16px;
+}
+
+.icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.icon-button:hover:not([aria-disabled='true']) {
+  border-color: var(--color-border-strong);
+  background: #f6f6fa;
+}
+
+.icon-button:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.icon-button[aria-disabled='true'] {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Purple banner that marks a page's content as example data. */
+.example-banner {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-quote-border);
+  border-radius: 10px;
+  background: var(--color-quote-bg);
+  font-size: 0.92rem;
+  color: var(--color-text);
+}
+
+/* Yellow message box for things that are not available yet. */
+.notice {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  background: #fffbeb;
+  font-size: 0.92rem;
+  color: #78350f;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.field__label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.select {
+  position: relative;
+}
+
+.select select {
+  width: 100%;
+  padding: var(--space-3) var(--space-6) var(--space-3) var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+  background: var(--color-surface);
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  appearance: none;
+  cursor: pointer;
+}
+
+.select select:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 1px;
+}
+
+.select svg {
+  position: absolute;
+  top: 50%;
+  right: var(--space-3);
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-:root {
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  line-height: 1.5;
-  color-scheme: light dark;
+/* Hides content visually while keeping it available to screen readers. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-}
-
-.placeholder {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  text-align: center;
+  background: var(--color-bg);
 }

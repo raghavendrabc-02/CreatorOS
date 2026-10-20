@@ -1,0 +1,104 @@
+.platform-page__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.platform-page__tile {
+  width: 76px;
+  height: 76px;
+  margin-bottom: 0;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.platform-page__heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.platform-page__title {
+  margin: 0 0 var(--space-1);
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.platform-page__description {
+  margin: 0;
+  font-size: 1.15rem;
+  color: var(--color-text-muted);
+}
+
+.platform-page__count {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+  flex-shrink: 0;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.platform-page__count svg {
+  width: 18px;
+  height: 18px;
+}
+
+.platform-page__tools {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: var(--space-5);
+}
+
+.platform-page__empty {
+  margin: 0;
+  padding: var(--space-7) var(--space-5);
+  text-align: center;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+}
+
+@media (max-width: 640px) {
+  .platform-page__header {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .platform-page__tile {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+  }
+
+  .platform-page__title {
+    font-size: 1.75rem;
+  }
+
+  .platform-page__description {
+    font-size: 1rem;
+  }
+
+  /* Let the count drop below the heading instead of squeezing the text. */
+  .platform-page__heading {
+    flex-basis: 220px;
+  }
+
+  .platform-page__count {
+    margin-left: calc(56px + var(--space-4));
+  }
+
+  .platform-page__tools {
+    grid-template-columns: 1fr;
+  }
+}

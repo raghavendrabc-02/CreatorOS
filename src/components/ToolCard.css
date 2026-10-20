@@ -1,0 +1,154 @@
+.tool-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.tool-card__media {
+  position: relative;
+}
+
+.tool-card__icon {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: var(--color-surface);
+  box-shadow: 0 8px 20px rgba(15, 18, 34, 0.1);
+  color: var(--tool-accent);
+}
+
+.tool-card__icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.tool-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--space-5) var(--space-4) var(--space-4);
+}
+
+.tool-card__name {
+  margin: 0 0 var(--space-3);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.tool-card__description {
+  margin: 0 0 var(--space-5);
+  color: var(--color-text-muted);
+}
+
+.tool-card__features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-6);
+  padding: 0;
+  list-style: none;
+  color: var(--color-text);
+}
+
+.tool-card__features li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.tool-card__check {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--tool-tint);
+  color: var(--tool-accent);
+}
+
+.tool-card__check svg {
+  width: 15px;
+  height: 15px;
+}
+
+.tool-card__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding: var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--tool-tint);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--tool-accent);
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.tool-card__button:hover {
+  background: var(--tool-accent);
+  color: #fff;
+}
+
+.tool-card__button:focus-visible {
+  outline: 2px solid var(--tool-accent);
+  outline-offset: 3px;
+}
+
+.tool-card__button-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Building blocks for the decorative previews at the top of tool cards. */
+.preview {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--tool-media-bg);
+}
+
+.preview__card {
+  position: absolute;
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 20px rgba(15, 18, 34, 0.08);
+}
+
+.preview__avatar {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e4e4ec;
+}
+
+.preview__lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.preview__lines span {
+  height: 7px;
+  border-radius: 999px;
+  background: #e8e8f0;
+}

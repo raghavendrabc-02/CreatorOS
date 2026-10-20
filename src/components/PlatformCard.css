@@ -1,0 +1,104 @@
+.platform-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--space-6);
+  background:
+    radial-gradient(circle at 100% 0%, var(--platform-tint) 0%, transparent 55%),
+    var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.platform-card__name {
+  margin: var(--space-2) 0 var(--space-3);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.platform-card__description {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 var(--space-6);
+  font-size: 1.05rem;
+  color: var(--color-text-muted);
+}
+
+.platform-card__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  margin-top: auto;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-sm);
+  background: var(--platform-button);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  transition: filter 0.15s ease;
+}
+
+.platform-card__button:hover {
+  filter: brightness(1.08);
+}
+
+.platform-card__button:focus-visible {
+  outline: 2px solid var(--platform-accent);
+  outline-offset: 3px;
+}
+
+.platform-card__button-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Coloured icon tile and label, also used on platform pages. */
+.platform-tile {
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  margin-bottom: var(--space-5);
+  border-radius: 24px;
+  background: var(--platform-tile);
+  box-shadow: 0 10px 24px var(--platform-tint);
+  color: #fff;
+}
+
+.platform-tile__icon {
+  width: 52%;
+  height: 52%;
+}
+
+.platform-badge {
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  background: var(--platform-tint);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--platform-accent);
+}
+
+@media (max-width: 640px) {
+  .platform-card {
+    padding: var(--space-5);
+  }
+
+  .platform-card__name {
+    font-size: 1.6rem;
+  }
+
+  .platform-tile {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+  }
+}
