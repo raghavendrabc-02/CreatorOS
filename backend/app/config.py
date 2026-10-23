@@ -25,6 +25,10 @@ class Settings(BaseSettings):
     # Set as a JSON list, e.g. CORS_ORIGINS='["http://localhost:5173","https://example.com"]'.
     cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
+    # PostgreSQL connection string, e.g. postgresql+psycopg://user:password@localhost:5432/creatoros.
+    # Contains a password, so it only ever goes in backend/.env or the hosting service's settings.
+    database_url: str | None = None
+
     @field_validator("cors_origins")
     @classmethod
     def check_cors_origins(cls, origins: list[str]) -> list[str]:
