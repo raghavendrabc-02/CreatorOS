@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, pool
 
 from alembic import context
 
+import app.models  # noqa: F401  (registers every model's table on Base.metadata)
 from app.config import get_settings
 from app.database import Base
 
@@ -17,7 +18,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # The models' tables, used by `alembic revision --autogenerate` to detect schema changes.
-# Every model module must be imported before this line (e.g. via an app.models package) so its table registers on Base.
+# New model modules must be imported in app/models/__init__.py to be included.
 target_metadata = Base.metadata
 
 
