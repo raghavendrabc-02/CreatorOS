@@ -313,3 +313,140 @@
     height: 140px;
   }
 }
+
+/* Project title, above the script */
+.vag-script__title {
+  width: 100%;
+  margin-bottom: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font: inherit;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.vag-script__title:focus {
+  outline: none;
+  border-color: var(--tool-accent);
+  box-shadow: 0 0 0 3px var(--tool-tint);
+}
+
+.vag-script__title:disabled,
+.vag-script__input:disabled {
+  background: #f6f6fa;
+  cursor: progress;
+}
+
+/* Autosave status line */
+.vag-save-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: 32px;
+  margin: 0 0 var(--space-3);
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+}
+
+.vag-save-status--saved span::before,
+.vag-save-status--idle span::before {
+  content: '✓ ';
+  color: #15803d;
+}
+
+.vag-save-status--empty,
+.vag-save-status--error {
+  color: #92400e;
+}
+
+/* Saved projects */
+.vag-saved__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.vag-saved__top .vag-settings__title {
+  margin: 0;
+}
+
+.vag-saved__top .button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.vag-saved__empty {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.vag-saved__error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.vag-saved__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 280px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.vag-saved__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.vag-saved__item--current {
+  border-color: var(--tool-accent);
+  background: var(--tool-tint);
+}
+
+.vag-saved__open {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--space-1) var(--space-2);
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.vag-saved__open:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 1px;
+}
+
+.vag-saved__name {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text);
+}
+
+.vag-saved__meta {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}

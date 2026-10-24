@@ -18,37 +18,45 @@ const ACTIONS = [
 
 const UNAVAILABLE_HINT = 'Available after images are generated'
 
-function VisualPlanPreview() {
+// The example plan, in the same shape as scenes saved by the backend.
+const EXAMPLE_SCENES = EXAMPLE_PLAN.map(({ time, ...scene }) => ({ id: scene.title, time_range: time, ...scene }))
+
+// Shows the project's saved scenes, or the example plan while it has none.
+function VisualPlanPreview({ scenes = [] }) {
+  const isExample = scenes.length === 0
+  const rows = isExample ? EXAMPLE_SCENES : scenes
+
   return (
     <section className="panel vag-plan" aria-labelledby="plan-heading">
       <div className="vag-heading">
         <FilmIcon className="vag-heading__icon vag-heading__icon--dark" />
         <div>
           <h2 id="plan-heading" className="vag-heading__title">
-            Generated visual plan <span className="vag-plan__badge">Example</span>
+            Generated visual plan {isExample && <span className="vag-plan__badge">Example</span>}
           </h2>
           <p className="vag-heading__text">
-            Sample layout only. Your own scenes, prompts, images and editing notes will appear
-            here after analysis.
+            {isExample
+              ? 'Sample layout only. Your own scenes, prompts, images and editing notes will appear here after analysis.'
+              : 'The saved scene-by-scene plan for this project.'}
           </p>
         </div>
       </div>
 
-      <div className="vag-plan__table" role="table" aria-label="Example visual plan">
+      <div className="vag-plan__table" role="table" aria-label={isExample ? 'Example visual plan' : 'Visual plan'}>
         <div className="vag-plan__row vag-plan__row--head" role="row">
           {COLUMNS.map((column) => (
             <span key={column} role="columnheader">{column}</span>
           ))}
         </div>
 
-        {EXAMPLE_PLAN.map((scene, index) => (
-          <div key={scene.title} className="vag-plan__row" role="row">
+        {rows.map((scene, index) => (
+          <div key={scene.id} className="vag-plan__row" role="row">
             <span role="cell" className="vag-plan__number">
               {String(index + 1).padStart(2, '0')}
             </span>
             <div role="cell" className="vag-plan__scene">
               <p className="vag-plan__scene-title">{scene.title}</p>
-              <p className="vag-plan__time">{scene.time}</p>
+              {scene.time_range && <p className="vag-plan__time">{scene.time_range}</p>}
               <p className="vag-plan__line">“{scene.line}”</p>
             </div>
             <p role="cell" className="vag-plan__prompt">
@@ -60,12 +68,16 @@ function VisualPlanPreview() {
               <span>Image appears here</span>
             </div>
             <div role="cell">
-              <span className="vag-plan__mobile-label">Editing notes</span>
-              <ul className="vag-plan__notes">
-                {scene.notes.map((note) => (
-                  <li key={note}>{note}</li>
-                ))}
-              </ul>
+              {scene.notes.length > 0 && (
+                <>
+                  <span className="vag-plan__mobile-label">Editing notes</span>
+                  <ul className="vag-plan__notes">
+                    {scene.notes.map((note, noteIndex) => (
+                      <li key={noteIndex}>{note}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </div>
             <div role="cell" className="vag-plan__actions">
               {ACTIONS.map(({ label, icon: Icon }) => (

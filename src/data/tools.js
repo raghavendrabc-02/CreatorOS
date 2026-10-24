@@ -32,7 +32,7 @@ export const TOOLS_BY_PLATFORM = {
       theme: 'violet',
       preview: VisualAssetPreview,
       component: VisualAssetGenerator,
-      props: { defaultAspectRatio: '9:16' },
+      props: { platform: 'instagram', defaultAspectRatio: '9:16' },
     },
     {
       id: 'comment-manager',
@@ -100,7 +100,7 @@ export const TOOLS_BY_PLATFORM = {
       theme: 'violet',
       preview: YouTubeVisualAssetPreview,
       component: VisualAssetGenerator,
-      props: { defaultAspectRatio: '16:9' },
+      props: { platform: 'youtube', defaultAspectRatio: '16:9' },
     },
     {
       id: 'posting-kit',
