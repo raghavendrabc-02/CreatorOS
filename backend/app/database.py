@@ -1,5 +1,6 @@
 from collections.abc import Iterator
 
+from fastapi import HTTPException
 from sqlalchemy import MetaData, create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
@@ -33,6 +34,7 @@ class Base(DeclarativeBase):
 def get_db() -> Iterator[Session]:
     """FastAPI dependency: gives a route one database session and closes it when the request ends."""
     if engine is None:
-        raise RuntimeError("DATABASE_URL is not set; add it to backend/.env")
+        # Same response as /health/db, instead of a 500 error. Set DATABASE_URL in backend/.env.
+        raise HTTPException(status_code=503, detail="database not configured")
     with SessionLocal() as session:
         yield session

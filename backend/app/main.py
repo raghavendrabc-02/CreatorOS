@@ -5,6 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.config import get_settings
 from app.database import engine
+from app.routers import visual_projects
 
 settings = get_settings()
 
@@ -18,6 +19,8 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
     allow_headers=["Content-Type"],
 )
+
+app.include_router(visual_projects.router)
 
 
 @app.get("/health", tags=["health"])

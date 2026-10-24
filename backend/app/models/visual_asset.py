@@ -4,6 +4,7 @@ The allowed values match the options in src/features/visual-assets/options.js on
 """
 
 from datetime import datetime
+from typing import Literal, get_args
 
 from sqlalchemy import CheckConstraint, DateTime, ForeignKey, String, Text, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import ARRAY
@@ -11,10 +12,16 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
-PLATFORMS = ("instagram", "youtube")
-VISUAL_STYLES = ("cinematic", "documentary", "illustration", "3d", "minimal")
-ASPECT_RATIOS = ("9:16", "4:5", "1:1", "16:9")
-IMAGE_QUALITIES = ("standard", "high")
+# Each type lists the allowed values once. The API validates against the type, the database against the tuple.
+Platform = Literal["instagram", "youtube"]
+VisualStyle = Literal["cinematic", "documentary", "illustration", "3d", "minimal"]
+AspectRatio = Literal["9:16", "4:5", "1:1", "16:9"]
+ImageQuality = Literal["standard", "high"]
+
+PLATFORMS = get_args(Platform)
+VISUAL_STYLES = get_args(VisualStyle)
+ASPECT_RATIOS = get_args(AspectRatio)
+IMAGE_QUALITIES = get_args(ImageQuality)
 
 # Same limit as the script textarea on the frontend.
 MAX_SCRIPT_LENGTH = 50_000
