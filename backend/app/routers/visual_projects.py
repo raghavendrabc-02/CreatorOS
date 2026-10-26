@@ -6,9 +6,11 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
+from app.config import get_settings
 from app.database import get_db
 from app.models.visual_asset import Platform, VisualProject, VisualScene
 from app.schemas.visual_asset import (
+    AnalysisResult,
     ProjectCreate,
     ProjectRead,
     ProjectSummary,
@@ -18,6 +20,7 @@ from app.schemas.visual_asset import (
     SceneRead,
     SceneUpdate,
 )
+from app.services import script_analysis
 
 router = APIRouter(prefix="/visual-projects", tags=["visual assets"])
 
@@ -104,17 +107,76 @@ def delete_project(project_id: int, db: DbSession) -> Response:
 # Scenes
 
 
-@router.put("/{project_id}/scenes", response_model=ProjectRead)
-def replace_scenes(project_id: int, plan: ScenePlan, db: DbSession) -> VisualProject:
-    """Replaces the whole scene plan, e.g. after AI analysis or reordering. An empty list removes all scenes."""
-    project = get_project_or_404(db, project_id)
+def save_scene_plan(db: Session, project: VisualProject, scenes: list[SceneCreate]) -> None:
+    """Swaps the project's scenes for the given plan. The caller commits."""
     project.scenes.clear()
     # Remove the old scenes before adding the new ones, which reuse the same positions.
     db.flush()
-    project.scenes.extend(build_scenes(plan.scenes))
+    project.scenes.extend(build_scenes(scenes))
     touch(project)
+
+
+@router.put("/{project_id}/scenes", response_model=ProjectRead)
+def replace_scenes(project_id: int, plan: ScenePlan, db: DbSession) -> VisualProject:
+    """Replaces the whole scene plan, e.g. after reordering. An empty list removes all scenes."""
+    project = get_project_or_404(db, project_id)
+    save_scene_plan(db, project, plan.scenes)
     db.commit()
     return get_project_or_404(db, project_id)
+
+
+def plan_fingerprint(project: VisualProject) -> str:
+    """Identifies what an analysis of this project would send to OpenAI right now."""
+    return script_analysis.analysis_fingerprint(
+        model=get_settings().openai_model,
+        platform=project.platform,
+        style=project.style,
+        aspect_ratio=project.aspect_ratio,
+        script=project.script,
+    )
+
+
+@router.post("/{project_id}/analyse", response_model=AnalysisResult)
+def analyse_project(project_id: int, db: DbSession) -> AnalysisResult:
+    """Turns the project's saved script into a scene plan with AI and saves it in place of the current scenes.
+
+    If the script and settings haven't changed since the last analysis, the saved scenes (including any edits
+    made to them) are returned as they are, without calling OpenAI.
+    """
+    project = get_project_or_404(db, project_id)
+    fingerprint = plan_fingerprint(project)
+    if project.scenes and project.analysis_fingerprint == fingerprint:
+        return AnalysisResult(project=ProjectRead.model_validate(project), reused=True)
+
+    request = {
+        "script": project.script,
+        "platform": project.platform,
+        "style": project.style,
+        "aspect_ratio": project.aspect_ratio,
+    }
+    # End the read transaction so the database connection isn't held during the (slow) AI request.
+    db.rollback()
+    try:
+        scenes = script_analysis.analyse_script(**request)
+    except script_analysis.AnalysisError as error:
+        # The current scenes stay as they were.
+        raise HTTPException(status_code=error.status_code, detail=error.message) from None
+
+    # Lock the project while saving, and only save if it is still the version that was analysed.
+    project = db.scalars(
+        select(VisualProject).where(VisualProject.id == project_id).with_for_update()
+    ).one_or_none()
+    if project is None:
+        raise HTTPException(status_code=404, detail="project not found")
+    if plan_fingerprint(project) != fingerprint:
+        raise HTTPException(
+            status_code=409,
+            detail="The script or settings changed during the analysis. Analyse again to use the latest version.",
+        )
+    save_scene_plan(db, project, scenes)
+    project.analysis_fingerprint = fingerprint
+    db.commit()
+    return AnalysisResult(project=ProjectRead.model_validate(get_project_or_404(db, project_id)), reused=False)
 
 
 def get_scene_or_404(db: Session, project_id: int, scene_id: int) -> VisualScene:

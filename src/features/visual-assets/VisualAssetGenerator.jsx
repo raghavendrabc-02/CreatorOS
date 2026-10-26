@@ -9,7 +9,7 @@ import VisualPlanPreview from './VisualPlanPreview.jsx'
 import { EXAMPLE_SCRIPT } from './exampleData.js'
 import { DEFAULT_SETTINGS } from './options.js'
 import { useProjectAutosave } from './useProjectAutosave.js'
-import { deleteProject, getProject } from './visualProjectsApi.js'
+import { analyseProject, deleteProject, getProject } from './visualProjectsApi.js'
 import './VisualAssetGenerator.css'
 
 const STEPS = [
@@ -19,8 +19,13 @@ const STEPS = [
   { title: 'Generate images', description: 'Create and save assets' },
 ]
 
-const NOT_CONNECTED_NOTICE =
-  'AI analysis is not connected yet. Your script and settings are saved automatically, so you can come back to them any time.'
+const REUSED_NOTICE =
+  'The script and settings haven’t changed since the last analysis, so the saved plan is shown. No new AI request was made.'
+
+const replacePlanQuestion = (count) =>
+  `Analyse again? If the script or settings changed since the last analysis, the current ${count} ${
+    count === 1 ? 'scene is' : 'scenes are'
+  } replaced by a new plan, including any edits you made to them.`
 
 // The open project's id is kept in the URL (?project=12), so reloading the page reopens it.
 function parseProjectId(value) {
@@ -40,11 +45,12 @@ function VisualAssetGenerator({ platform, defaultAspectRatio = DEFAULT_SETTINGS.
   const [scenes, setScenes] = useState([])
   const [loading, setLoading] = useState(initialProjectId != null)
   const [notice, setNotice] = useState('')
-  // Goes up when a project is deleted, so the saved projects list reloads.
-  const [deleteCount, setDeleteCount] = useState(0)
+  const [analysing, setAnalysing] = useState(false)
+  // Goes up when a project is deleted or analysed, so the saved projects list reloads.
+  const [listVersion, setListVersion] = useState(0)
 
   const autosave = useProjectAutosave(platform, initialProjectId)
-  const { projectId, setCurrentProject } = autosave
+  const { projectId, setCurrentProject, getCurrentProjectId } = autosave
 
   function showProject(project) {
     setTitle(project.title)
@@ -126,6 +132,30 @@ function VisualAssetGenerator({ platform, defaultAspectRatio = DEFAULT_SETTINGS.
     saveDraft({ settings: value })
   }
 
+  // Saves the latest edits, then asks the backend to turn the saved script into scenes (one AI request at most).
+  async function handleAnalyse() {
+    if (scenes.length > 0 && !window.confirm(replacePlanQuestion(scenes.length))) return
+    setAnalysing(true)
+    setNotice('')
+    try {
+      const { projectId: id, saved } = await autosave.flush()
+      if (!saved || id == null) {
+        setNotice('The script couldn’t be saved, so it can’t be analysed yet. Fix the save error above and try again.')
+        return
+      }
+      const { project, reused } = await analyseProject(id)
+      // Another project may have been opened while the analysis ran; its plan must not be replaced.
+      if (getCurrentProjectId() !== id) return
+      setScenes(project.scenes)
+      setListVersion((version) => version + 1)
+      if (reused) setNotice(REUSED_NOTICE)
+    } catch (analyseError) {
+      setNotice(`Analysis failed: ${analyseError.message}`)
+    } finally {
+      setAnalysing(false)
+    }
+  }
+
   async function openProject(id) {
     if (id === projectId) return
     await autosave.flush()
@@ -161,7 +191,7 @@ function VisualAssetGenerator({ platform, defaultAspectRatio = DEFAULT_SETTINGS.
         setCurrentProject(null)
         showNewProject()
       }
-      setDeleteCount((count) => count + 1)
+      setListVersion((version) => version + 1)
     } catch (deleteError) {
       setNotice(`Couldn't delete that project: ${deleteError.message}`)
     }
@@ -169,7 +199,7 @@ function VisualAssetGenerator({ platform, defaultAspectRatio = DEFAULT_SETTINGS.
 
   return (
     <div className="vag">
-      <StepProgress steps={STEPS} current={scenes.length > 0 ? 2 : 0} />
+      <StepProgress steps={STEPS} current={analysing ? 1 : scenes.length > 0 ? 2 : 0} />
 
       <div className="vag__columns">
         <ScriptInput
@@ -177,7 +207,8 @@ function VisualAssetGenerator({ platform, defaultAspectRatio = DEFAULT_SETTINGS.
           onTitleChange={handleTitleChange}
           script={script}
           onChange={handleScriptChange}
-          onAnalyse={() => setNotice(NOT_CONNECTED_NOTICE)}
+          onAnalyse={handleAnalyse}
+          analysing={analysing}
           notice={notice}
           disabled={loading}
           saveStatus={{
@@ -192,7 +223,7 @@ function VisualAssetGenerator({ platform, defaultAspectRatio = DEFAULT_SETTINGS.
           <SavedProjects
             platform={platform}
             currentId={projectId}
-            refreshKey={`${autosave.saveCount}-${deleteCount}`}
+            refreshKey={`${autosave.saveCount}-${listVersion}`}
             onOpen={openProject}
             onNew={startNewProject}
             onDelete={removeProject}

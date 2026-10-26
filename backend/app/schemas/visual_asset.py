@@ -134,3 +134,10 @@ class ProjectRead(BaseModel):
     scenes: list[SceneRead]
     created_at: datetime
     updated_at: datetime
+
+
+class AnalysisResult(BaseModel):
+    """The project after analysis. reused is true when the script was unchanged and no AI request was made."""
+
+    project: ProjectRead
+    reused: bool

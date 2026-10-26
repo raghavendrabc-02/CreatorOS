@@ -53,6 +53,9 @@ class VisualProject(Base):
     style: Mapped[str] = mapped_column(String(20), server_default="cinematic")
     aspect_ratio: Mapped[str] = mapped_column(String(10))
     quality: Mapped[str] = mapped_column(String(20), server_default="high")
+    # Identifies the script and settings the current scenes were generated from (see app/services/script_analysis.py).
+    # If they haven't changed, analysing again reuses the saved scenes instead of calling OpenAI.
+    analysis_fingerprint: Mapped[str | None] = mapped_column(String(64))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()

@@ -28,7 +28,7 @@ function SaveStatus({ loading, projectId, status, error, onRetry }) {
   )
 }
 
-function ScriptInput({ title, onTitleChange, script, onChange, onAnalyse, notice, disabled, saveStatus }) {
+function ScriptInput({ title, onTitleChange, script, onChange, onAnalyse, analysing, notice, disabled, saveStatus }) {
   const isEmpty = script.trim().length === 0
 
   return (
@@ -89,11 +89,13 @@ function ScriptInput({ title, onTitleChange, script, onChange, onAnalyse, notice
         type="button"
         className="button button--primary vag-script__submit"
         onClick={onAnalyse}
-        disabled={disabled || isEmpty}
+        // Disabled while running, so a double click can't send a second (paid) AI request.
+        disabled={disabled || isEmpty || analysing}
+        aria-busy={analysing}
       >
         <SparkleIcon />
-        Analyse Script &amp; Create Visual Plan
-        <ArrowRightIcon />
+        {analysing ? 'Analysing script… this can take up to a minute' : 'Analyse Script & Create Visual Plan'}
+        {!analysing && <ArrowRightIcon />}
       </button>
 
       {notice && (

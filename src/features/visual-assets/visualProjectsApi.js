@@ -46,3 +46,10 @@ export function updateProject(id, draft) {
 export function deleteProject(id) {
   return apiRequest(`/visual-projects/${id}`, { method: 'DELETE' })
 }
+
+// Runs the AI analysis on the project's saved script and returns { project, reused }.
+// reused is true when the script and settings were unchanged, so the saved plan came back without a new AI request.
+export async function analyseProject(id) {
+  const { project, reused } = await apiRequest(`/visual-projects/${id}/analyse`, { method: 'POST' })
+  return { project: fromApiProject(project), reused }
+}

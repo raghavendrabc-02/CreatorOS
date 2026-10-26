@@ -52,12 +52,16 @@ export function useProjectAutosave(platform, initialProjectId) {
     }
   }, [platform])
 
-  // Saves any waiting edits now. Resolves once they are saved (or the save failed).
+  // Saves any waiting edits now. Resolves once they are saved (or the save failed) with
+  // { projectId, saved }: saved is false when edits are still waiting because the save failed.
   const flush = useCallback(() => {
     clearTimeout(timerRef.current)
     queueRef.current = queueRef.current.then(saveLatest)
-    return queueRef.current
+    return queueRef.current.then(() => ({ projectId: projectIdRef.current, saved: draftRef.current === null }))
   }, [saveLatest])
+
+  // The open project's id right now, for async code that must check it is still on the same project.
+  const getCurrentProjectId = useCallback(() => projectIdRef.current, [])
 
   // Call after every edit with the full current draft: { title, script, settings }.
   const queue = useCallback(
@@ -93,5 +97,5 @@ export function useProjectAutosave(platform, initialProjectId) {
     }
   }, [flush])
 
-  return { projectId, status, error, saveCount, queue, flush, setCurrentProject }
+  return { projectId, status, error, saveCount, queue, flush, setCurrentProject, getCurrentProjectId }
 }
